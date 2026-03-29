@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>社团招新平台</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Outfit:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <section class="auth-screen" id="authScreen">
+        <div class="auth-card">
+          <p class="eyebrow">Campus Clubs</p>
+          <h1>社团招新平台</h1>
+          <p class="auth-copy">学生查看社团、报名和跟进进度。管理员发布信息、处理报名和安排面试。</p>
+          <form id="loginForm" class="auth-form">
+            <label>
+              账号名称
+              <input id="usernameInput" name="username" type="text" placeholder="请输入姓名或账号" required />
+            </label>
+            <label>
+              登录身份
+              <div class="role-choices">
+                <button class="role-choice is-active" type="button" data-login-role="student">学生登录</button>
+                <button class="role-choice" type="button" data-login-role="admin">管理员登录</button>
+              </div>
+            </label>
+            <button class="primary-button wide" type="submit">进入平台</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="app-view hidden" id="studentApp">
+        <header class="topbar">
+          <div class="brand">
+            <span class="brand-mark">校</span>
+            <div>
+              <p>学生端</p>
+              <span id="studentWelcome">欢迎使用</span>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <button class="ghost-button" id="studentLogout" type="button">退出登录</button>
+          </div>
+        </header>
+
+        <main class="dashboard">
+          <section class="hero-panel">
+            <div>
+              <p class="eyebrow">学生首页</p>
+              <h2>查看社团、完成报名、跟进进度</h2>
+              <p>你可以先筛选社团，再查看关键信息，最后提交报名并在个人中心跟进结果。</p>
+            </div>
+            <div class="hero-summary">
+              <div>
+                <strong id="studentAppliedCount">0</strong>
+                <span>已报名社团</span>
+              </div>
+              <div>
+                <strong id="studentPendingCount">0</strong>
+                <span>待处理进度</span>
+              </div>
+              <div>
+                <strong id="studentSavedCount">0</strong>
+                <span>已收藏</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="grid-two">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">社团发现</p>
+                  <h3>筛选适合你的社团</h3>
+                </div>
+              </div>
+              <div class="filter-row">
+                <select id="studentInterestFilter">
+                  <option value="all">全部方向</option>
+                  <option value="technology">科技</option>
+                  <option value="arts">文艺</option>
+                  <option value="sports">运动</option>
+                  <option value="social">公益</option>
+                  <option value="media">传媒</option>
+                </select>
+                <select id="studentTimeFilter">
+                  <option value="all">全部投入时间</option>
+                  <option value="under2">每周低于 2 小时</option>
+                  <option value="2to3">每周 2-3 小时</option>
+                  <option value="3to5">每周 3-5 小时</option>
+                  <option value="5to7">每周 5-7 小时</option>
+                  <option value="7plus">每周 7 小时以上</option>
+                </select>
+              </div>
+              <div class="club-list" id="studentClubList"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">社团详情</p>
+                  <h3 id="studentDetailName">请选择一个社团</h3>
+                </div>
+              </div>
+              <div class="detail-metrics" id="studentDetailMetrics"></div>
+              <div class="detail-block" id="studentDetailContent"></div>
+              <div class="detail-actions">
+                <button class="secondary-button" id="saveClubBtn" type="button">收藏社团</button>
+                <button class="primary-button" id="applyClubBtn" type="button">立即报名</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="grid-two">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">智能匹配</p>
+                  <h3>快速获得推荐</h3>
+                </div>
+              </div>
+              <form class="matcher-form" id="matcherForm">
+                <label>
+                  兴趣方向
+                  <select name="interest" required>
+                    <option value="technology">科技</option>
+                    <option value="arts">文艺</option>
+                    <option value="sports">运动</option>
+                    <option value="social">公益</option>
+                    <option value="media">传媒</option>
+                  </select>
+                </label>
+                <label>
+                  每周可投入时间
+                  <select name="commitment" required>
+                    <option value="under2">每周低于 2 小时</option>
+                    <option value="2to3">每周 2-3 小时</option>
+                    <option value="3to5">每周 3-5 小时</option>
+                    <option value="5to7">每周 5-7 小时</option>
+                    <option value="7plus">每周 7 小时以上</option>
+                  </select>
+                </label>
+                <label>
+                  你最希望获得什么
+                  <select name="goal" required>
+                    <option value="skill">技能提升</option>
+                    <option value="friends">同好社交</option>
+                    <option value="resume">项目经历</option>
+                    <option value="expression">表达机会</option>
+                  </select>
+                </label>
+                <button class="primary-button wide" type="submit">生成推荐</button>
+              </form>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">推荐结果</p>
+                  <h3>适合你的社团</h3>
+                </div>
+              </div>
+              <div id="matchResults" class="result-list empty-state">提交测评后显示推荐结果。</div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">我的报名</p>
+                <h3>报名进度与通知</h3>
+              </div>
+            </div>
+            <div class="application-list" id="studentApplications"></div>
+          </section>
+
+          <section class="grid-two">
+            <div class="panel" id="savedPanel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">我的收藏</p>
+                  <h3>稍后查看的社团</h3>
+                </div>
+              </div>
+              <div class="saved-list" id="savedClubList"></div>
+            </div>
+
+            <div class="panel" id="applyPanel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">报名确认</p>
+                  <h3>提交报名信息</h3>
+                </div>
+              </div>
+              <div class="apply-preview" id="applyPreview">请选择社团后点击“立即报名”。</div>
+              <form class="admin-form" id="applyForm">
+                <label>
+                  报名说明
+                  <textarea id="applyReasonInput" rows="4" placeholder="简单写一下你的兴趣、可投入时间或相关经历"></textarea>
+                </label>
+                <button class="primary-button wide" type="submit">确认提交报名</button>
+              </form>
+            </div>
+          </section>
+        </main>
+      </section>
+
+      <section class="app-view hidden" id="adminApp">
+        <header class="topbar">
+          <div class="brand">
+            <span class="brand-mark">管</span>
+            <div>
+              <p>管理员端</p>
+              <span id="adminWelcome">欢迎使用</span>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <select id="adminClubSelector"></select>
+            <button class="ghost-button" id="adminLogout" type="button">退出登录</button>
+          </div>
+        </header>
+
+        <main class="dashboard">
+          <section class="hero-panel">
+            <div>
+              <p class="eyebrow">管理员首页</p>
+              <h2>发布招新信息、处理报名、安排面试</h2>
+              <p>你可以修改社团资料、管理候选人、更新状态和调整面试安排。</p>
+            </div>
+            <div class="hero-summary" id="adminSummary"></div>
+          </section>
+
+          <section class="grid-two">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">社团信息</p>
+                  <h3>编辑学生看到的招新内容</h3>
+                </div>
+              </div>
+              <form class="admin-form" id="clubForm">
+                <label>
+                  社团名称
+                  <input id="clubNameInput" type="text" required />
+                </label>
+                <label>
+                  简介
+                  <textarea id="clubDescInput" rows="3" required></textarea>
+                </label>
+                <label>
+                  每周投入时间
+                  <input id="clubHoursInput" type="text" required />
+                </label>
+                <label>
+                  招新流程
+                  <textarea id="clubProcessInput" rows="3" required></textarea>
+                </label>
+                <button class="primary-button wide" type="submit">保存社团信息</button>
+              </form>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">招新概览</p>
+                  <h3>当前报名情况</h3>
+                </div>
+              </div>
+              <div class="admin-stats" id="adminStats"></div>
+            </div>
+          </section>
+
+          <section class="grid-two">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">报名管理</p>
+                  <h3>候选人列表</h3>
+                </div>
+                <div class="filter-tabs" id="candidateFilters">
+                  <button class="filter-tab is-active" type="button" data-filter="all">全部</button>
+                  <button class="filter-tab" type="button" data-filter="pending">待筛选</button>
+                  <button class="filter-tab" type="button" data-filter="interview">待面试</button>
+                  <button class="filter-tab" type="button" data-filter="admitted">已录取</button>
+                </div>
+              </div>
+              <div class="candidate-list" id="candidateList"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">面试安排</p>
+                  <h3>时间表与冲突提醒</h3>
+                </div>
+              </div>
+              <form class="admin-form inline-form" id="scheduleForm">
+                <input id="scheduleTitleInput" type="text" placeholder="面试名称" required />
+                <input id="scheduleTimeInput" type="text" placeholder="时间，如周三 19:00-20:00" required />
+                <input id="scheduleOwnerInput" type="text" placeholder="参与学生" required />
+                <button class="primary-button" type="submit">新增安排</button>
+              </form>
+              <div class="schedule-list" id="scheduleList"></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">通知中心</p>
+                <h3>管理员待处理事项</h3>
+              </div>
+            </div>
+            <div class="todo-list" id="adminTodos"></div>
+          </section>
+        </main>
+      </section>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
